@@ -97,7 +97,7 @@ avishkar-solutions/
 
 **Avishkar**  
 *MCA Student | Full-Stack Developer | Project & Career Mentor*  
-- **Location:** Kolhapur, Maharashtra, India  
+- **Location:** Karad, Maharashtra, India  
 - **Internship:** Full Stack Developer Intern at Wolfox Pvt. Ltd. (Kolhapur)  
 - **Specialization:** Python, Flask, MongoDB, Web Development & Career Guidance  
 
