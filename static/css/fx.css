@@ -1,0 +1,10 @@
+.hero-3d{display:none}
+@media (min-width:761px){
+  .hero-3d{display:block;height:min(420px,52vh);position:relative}
+  .hero-3d canvas{width:100%;height:100%;display:block}
+  .hero:not(.has-3d) .hero-3d{display:none}
+  .hero.has-3d .path{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+.row{border-radius:0 8px 8px 0;padding-right:1.2rem;transition:transform .12s ease-out,box-shadow .2s,background .2s;will-change:transform}
+.row:hover{background:#fff;box-shadow:0 10px 28px rgba(8,57,113,.12)}
+@media (prefers-reduced-motion:reduce){.row{transition:none}}

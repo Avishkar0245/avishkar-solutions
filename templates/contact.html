@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Contact & Book Guidance | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="block" style="padding-top: 2rem;">
+  <div class="section-header">
+    <span class="sub-title">GET IN TOUCH</span>
+    <h1>Let's Connect & Discuss Your Project</h1>
+    <p class="lead" style="margin-bottom: 2rem;">Have questions about your final year project, resume review, or career guidance? Reach out directly.</p>
+  </div>
+
+  <div class="contact-wrapper">
+    <!-- डावी बाजू: संपर्क माहिती -->
+    <div class="contact-info-card">
+      <h3>Contact Information</h3>
+      <p style="color: #cbd5e1; margin-bottom: 2rem;">Feel free to reach out directly through WhatsApp or email for instant support.</p>
+      
+      <div class="info-item">
+        <i class="fab fa-whatsapp"></i>
+        <div>
+          <h4>WhatsApp Direct</h4>
+          <a href="https://wa.me/{{ site.whatsapp }}" target="_blank">+{{ site.whatsapp }}</a>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-envelope"></i>
+        <div>
+          <h4>Email</h4>
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <div>
+          <h4>Location</h4>
+          <p style="color: #fff; margin: 0;">Kolhapur / Maharashtra, India</p>
+        </div>
+      </div>
+
+      <div class="info-socials">
+        <a href="{{ site.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>
+        <a href="{{ site.github }}" target="_blank"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+
+    <!-- उजवी बाजू: इनक्वायरी फॉर्म (MongoDB Atlas मध्ये सेव्ह होतो) -->
+    <div class="contact-form-card">
+      <form method="post" action="{{ url_for('contact') }}">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="name" value="{{ form.name }}" placeholder="e.g. Rahul Patil" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>WhatsApp Number *</label>
+            <input type="tel" name="phone" value="{{ form.phone }}" placeholder="e.g. 9876543210" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="email" value="{{ form.email }}" placeholder="e.g. rahul@example.com">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>What service are you looking for?</label>
+          <select name="interest">
+            {% for o in ["Project Mentoring (Flask / Web Apps)","Resume & LinkedIn Profile Review","Career & Interview Guidance","Custom Web Development","Other"] %}
+            <option {% if (request.args.get('s') or form.interest)==o %}selected{% endif %}>{{ o }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Your Message / Project Topic *</label>
+          <textarea name="message" rows="4" placeholder="Briefly describe your project idea or what help you need..." required>{{ form.message }}</textarea>
+        </div>
+
+        <button class="btn" type="submit" style="width: 100%; justify-content: center; padding: .85rem;">
+          <i class="fas fa-paper-plane"></i> Send Inquiry
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

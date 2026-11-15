@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.name }} | Innovation through technology{% endblock %}</title>
+  <meta name="description" content="Final-year projects, resume help and fresher career guidance, all in one place.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="icon" href="{{ url_for('static', filename='images/icon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="{{ url_for('home') }}">
+    <img class="logo" src="{{ url_for('static', filename='images/logo.png') }}" alt="{{ site.name }}">
+  </a>
+  
+  <nav id="navMenu">
+    <a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a>
+    <a href="{{ url_for('services') }}"><i class="fas fa-briefcase"></i> Services</a>
+    <a href="{{ url_for('portfolio') }}"><i class="fas fa-laptop-code"></i> Portfolio</a>
+    <a href="{{ url_for('about') }}"><i class="fas fa-user"></i> About</a>
+    <a href="{{ url_for('contact') }}"><i class="fas fa-paper-plane"></i> Contact</a>
+    <button type="button" class="btn small" data-open-chat><i class="fas fa-comment-dots"></i> Ask AI</button>
+  </nav>
+</header>
+
+{% with msgs = get_flashed_messages(with_categories=true) %}
+  {% for cat, m in msgs %}
+    <div class="flash {{ cat }}">
+      <i class="fas {% if cat == 'ok' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i> {{ m }}
+    </div>
+  {% endfor %}
+{% endwith %}
+
+<!-- मुख्य कंटेंट ब्लॉक (हा फाईलमध्ये फक्त एकदाच हवा) -->
+<main>{% block content %}{% endblock %}</main>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://wa.me/{{ site.whatsapp }}?text=Hello%20Avishkar,%20I%20need%20guidance" 
+   class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <h3>{{ site.name }}</h3>
+      <p>Empowering students and freshers with practical tech skills, live projects & career readiness.</p>
+    </div>
+    <div class="footer-links">
+      <a href="{{ site.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+      <a href="{{ site.github }}" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+      <a href="https://wa.me/{{ site.whatsapp }}" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; {{ site.name }} &middot; All rights reserved.
+  </div>
+</footer>
+
+{% include "chat_widget.html" %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>

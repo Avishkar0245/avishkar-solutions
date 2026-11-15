@@ -1,0 +1,12 @@
+<div id="chat" class="chat">
+  <section class="chat-panel" role="dialog" aria-label="Chat with the Avishkar Solutions assistant" hidden>
+    <header><strong>Ask Avishkar Solutions</strong><button type="button" class="chat-close" aria-label="Close chat">&times;</button></header>
+    <div class="chat-log" role="log" aria-live="polite"></div>
+    <form>
+      <input type="text" maxlength="500" placeholder="Type your question" aria-label="Your question" autocomplete="off">
+      <button class="btn small" type="submit">Send</button>
+    </form>
+    <p class="chat-note">AI assistant. Chats are saved to improve answers. For a personal reply use the <a href="{{ url_for('contact') }}">Contact page</a> or <a href="https://wa.me/{{ site.whatsapp }}">WhatsApp</a>.</p>
+  </section>
+  <button type="button" class="chat-toggle btn" aria-expanded="false">Ask a question</button>
+</div>

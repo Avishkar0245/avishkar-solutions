@@ -1,0 +1,377 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Avishkar Solutions</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #080d1b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: .35;
+            z-index: -1;
+        }
+
+        .glow.one {
+            background: #713cff;
+            top: -150px;
+            left: -100px;
+        }
+
+        .glow.two {
+            background: #087cff;
+            bottom: -150px;
+            right: -100px;
+        }
+
+        .container {
+            width: 900px;
+            max-width: 94%;
+            min-height: 540px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 80px rgba(0,0,0,.45);
+            animation: appear .7s ease;
+        }
+
+        .left {
+            padding: 55px 42px;
+            background: linear-gradient(145deg,
+                rgba(111,62,255,.22),
+                rgba(20,100,220,.08));
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -.8px;
+        }
+
+        .brand span {
+            color: #a78bfa;
+        }
+
+        .welcome h1 {
+            font-size: 38px;
+            line-height: 1.25;
+            margin-bottom: 18px;
+        }
+
+        .welcome p {
+            color: #a9b2c7;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 9px 14px;
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 30px;
+            font-size: 11px;
+            color: #c4b5fd;
+            width: fit-content;
+            margin-bottom: 25px;
+        }
+
+        .left-footer {
+            color: #8792aa;
+            font-size: 11px;
+        }
+
+        .right {
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right h2 {
+            font-size: 29px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #929db4;
+            font-size: 13px;
+            margin-bottom: 35px;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #d7dced;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            outline: none;
+            border: 1px solid #303a52;
+            background: rgba(8,13,27,.7);
+            color: white;
+            font-size: 13px;
+            transition: .3s;
+        }
+
+        input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,.15);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .toggle {
+            position: absolute;
+            right: 14px;
+            top: 15px;
+            color: #a9b2c7;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            margin: 5px 0 25px;
+            color: #a9b2c7;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .remember input {
+            width: 14px;
+            accent-color: #8b5cf6;
+        }
+
+        a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(100deg,#713cff,#397bff);
+            box-shadow: 0 8px 25px rgba(113,60,255,.25);
+            transition: .3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(113,60,255,.4);
+        }
+
+        .security {
+            text-align: center;
+            margin-top: 27px;
+            color: #8792aa;
+            font-size: 11px;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width:650px) {
+            body { overflow: auto; padding: 20px 0; }
+            .container { grid-template-columns: 1fr; }
+            .left { padding: 30px; min-height: 220px; }
+            .welcome h1 { font-size: 27px; }
+            .left-footer { margin-top: 25px; }
+            .right { padding: 35px 28px; }
+        }
+
+     /* Moving Background Logo */
+
+
+.moving-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    opacity: 0.13;
+    pointer-events: none;
+    animation: moveLogo 12s ease-in-out infinite alternate;
+}
+
+.moving-logo img {
+    display: block;
+    width: 280px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px #8b5cf6);
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes moveLogo {
+    0% {
+        transform: translate(-150%, -50%);
+    }
+
+    100% {
+        transform: translate(50%, -50%);
+    }
+}
+    </style>
+</head>
+
+<body>
+
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<div class="moving-logo">
+    <img src="{{ url_for('static', filename='images/logo.png') }}"
+         alt="Avishkar Solutions Logo">
+</div>
+
+<div class="container">
+
+    <div class="left">
+        <div class="brand">AVISHKAR <span>SOLUTIONS.</span></div>
+
+        <div class="welcome">
+            <div class="tag">✦ ADMIN CONTROL CENTER</div>
+            <h1>Manage your business with confidence.</h1>
+            <p>
+                Welcome to Avishkar Solutions Admin Portal.
+                Manage projects, clients and enquiries
+                from one powerful workspace.
+            </p>
+        </div>
+
+        <div class="left-footer">
+            © 2026 Avishkar Solutions. All rights reserved.
+        </div>
+    </div>
+
+    <div class="right">
+
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Sign in to access your admin dashboard.</p>
+         
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div style="color:#ff7777; margin-bottom:15px; font-size:13px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endwith %}
+
+       <form method="POST" action="{{ url_for('admin_login') }}">>
+
+            <div class="input-group">
+                <label>USERNAME OR EMAIL</label>
+                <input type="text" name="username"
+                       placeholder="Enter your username" required>
+            </div>
+
+            <div class="input-group">
+                <label>PASSWORD</label>
+                <div class="password-wrap">
+                    <input type="password" id="password"
+                           name="password"
+                           placeholder="Enter your password" required>
+                    <span class="toggle" onclick="togglePassword()">Show</span>
+                </div>
+            </div>
+
+            <div class="options">
+                <label class="remember">
+                    <input type="checkbox" name="remember">
+                    Remember me
+                </label>
+
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Sign In to Dashboard →
+            </button>
+
+        </form>
+
+        <div class="security">
+            🔒 Secure Admin Access
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const password = document.getElementById("password");
+        const toggle = document.querySelector(".toggle");
+
+        if (password.type === "password") {
+            password.type = "text";
+            toggle.textContent = "Hide";
+        } else {
+            password.type = "password";
+            toggle.textContent = "Show";
+        }
+    }
+</script>
+
+</body>
+
+</html>

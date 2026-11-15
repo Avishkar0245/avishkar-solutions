@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Portfolio & Live Projects | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="block" style="padding-top: 2rem;">
+  <div class="section-header">
+    <span class="sub-title">REAL CODE & DEPLOYMENTS</span>
+    <h1>Built with Passion & Real-World Stacks</h1>
+    <p class="lead">Check out web applications, database architectures, and systems built using Python, Flask, MySQL & MongoDB.</p>
+  </div>
+
+  <div class="grid-cards">
+    {% for p in projects %}
+    <div class="card project-card">
+      <div class="project-header">
+        <i class="fas fa-laptop-code" style="font-size: 1.8rem; color: var(--primary);"></i>
+        <div class="project-links">
+          {% if p.github and p.github != '#' %}
+            <a href="{{ p.github }}" target="_blank" title="GitHub Source Code"><i class="fab fa-github"></i> Code</a>
+          {% endif %}
+          {% if p.demo and p.demo != '' %}
+            <a href="{{ p.demo }}" target="_blank" title="Live Website Demo"><i class="fas fa-external-link-alt"></i> Live</a>
+          {% endif %}
+        </div>
+      </div>
+      <h3>{{ p.title }}</h3>
+      <p>{{ p.text }}</p>
+      
+      <div class="tags" style="margin-top: 1.2rem;">
+        {% for t in p.tags %}<span>{{ t }}</span>{% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

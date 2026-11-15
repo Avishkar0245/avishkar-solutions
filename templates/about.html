@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}About | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="block" style="padding-top: 2rem;">
+  <div class="about-grid">
+    <div>
+      <div class="badge"><i class="fas fa-user-check"></i> Founder & Full Stack Developer</div>
+      <h1 style="font-size: 2.5rem;">{{ about.headline }}</h1>
+      <p class="lead">{{ about.intro }}</p>
+      
+      <div style="margin: 1.8rem 0; line-height: 1.8;">
+        <p>{{ about.experience }}</p>
+        <p style="margin-top: 1rem;">{{ about.vision }}</p>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <h4 style="margin-bottom: .8rem; color: var(--navy);">Core Technologies:</h4>
+        <div class="tags">
+          {% for skill in about.skills.split(',') %}
+            <span>{{ skill.strip() }}</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-top: 2.5rem;">
+        <a href="{{ url_for('contact') }}" class="btn"><i class="fas fa-envelope"></i> Get in touch</a>
+        <a href="{{ site.linkedin }}" target="_blank" class="btn ghost"><i class="fab fa-linkedin"></i> Connect on LinkedIn</a>
+      </div>
+    </div>
+
+    <!-- साइड कार्ड -->
+    <div class="card" style="align-self: start; background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);">
+      <h3 style="color: var(--navy); margin-bottom: 1.2rem;"><i class="fas fa-award" style="color: var(--primary);"></i> Why Students Trust Me</h3>
+      <ul style="padding-left: 1.2rem; line-height: 2; color: var(--mute);">
+        <li><b>100% Viva Ready:</b> Full code explanation, line by line.</li>
+        <li><b>Clean Architecture:</b> Proper folder structures and clean code.</li>
+        <li><b>Cloud Deployment:</b> Live links to showcase on your resume.</li>
+        <li><b>Direct 1-on-1 Support:</b> Personal WhatsApp & Call assistance.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}
