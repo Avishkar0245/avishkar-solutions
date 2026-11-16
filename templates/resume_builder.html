@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Free ATS Resume Builder | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="block" style="padding-top: 2rem; max-width: 900px; margin: 0 auto;">
+  <div class="section-header" style="text-align: center;">
+    <span class="sub-title">100% FREE & ATS-FRIENDLY</span>
+    <h1>Instant ATS Resume Builder</h1>
+    <p class="lead" style="margin: 0 auto 2rem;">Fill in your details below and download an industry-standard, single-column ATS resume approved by top tech recruiters.</p>
+  </div>
+
+  <div class="card" style="padding: 2.5rem; border-radius: var(--radius); box-shadow: var(--shadow-md);">
+    <form method="POST" action="{{ url_for('resume_builder') }}">
+      
+      <!-- १. वैयक्तिक माहिती -->
+      <h3 style="color: var(--primary); margin-bottom: 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-user"></i> 1. Personal Details
+      </h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="name" placeholder="e.g. Rahul Patil" required>
+        </div>
+        <div class="form-group">
+          <label>Mobile Number (WhatsApp) *</label>
+          <input type="tel" name="phone" placeholder="e.g. 9876543210" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" name="email" placeholder="e.g. rahul@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Location (City, State) *</label>
+          <input type="text" name="location" placeholder="e.g. Kolhapur, Maharashtra" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>LinkedIn Profile URL</label>
+          <input type="url" name="linkedin" placeholder="https://linkedin.com/in/rahul">
+        </div>
+        <div class="form-group">
+          <label>GitHub Profile URL</label>
+          <input type="url" name="github" placeholder="https://github.com/rahul">
+        </div>
+      </div>
+
+      <!-- २. प्रोफाईल समरी -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-bullseye"></i> 2. Professional Summary
+      </h3>
+      <div class="form-group">
+        <label>Short 2-3 Lines Summary (For Freshers)</label>
+        <textarea name="summary" rows="3" placeholder="Enthusiastic and detail-oriented Full-Stack Developer with hands-on project experience in Python, Flask, and MongoDB. Seeking an entry-level software engineering role to contribute to scalable web solutions.">Enthusiastic and detail-oriented Full-Stack Developer with hands-on project experience in Python, Flask, and MongoDB. Seeking an entry-level software engineering role to contribute to scalable web applications.</textarea>
+      </div>
+
+      <!-- ३. शिक्षण (Education) -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-graduation-cap"></i> 3. Education
+      </h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Degree & Branch *</label>
+          <input type="text" name="education" placeholder="e.g. Master of Computer Applications (MCA)" required>
+        </div>
+        <div class="form-group">
+          <label>Graduation Year / Status *</label>
+          <input type="text" name="year" placeholder="e.g. 2024 - 2026 (Pursuing) or 2026" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>College / University Name *</label>
+        <input type="text" name="college" placeholder="e.g. Shivaji University / KIT College of Engineering, Kolhapur" required>
+      </div>
+
+      <!-- ४. टेक्निकल स्किल्स -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-laptop-code"></i> 4. Technical Skills
+      </h3>
+      <div class="form-group">
+        <label>Skills (Comma separated) *</label>
+        <input type="text" name="skills" placeholder="e.g. Python, Flask, MySQL, MongoDB, JavaScript, HTML5, CSS3, Git, REST APIs" value="Python, Flask, MongoDB Atlas, MySQL, JavaScript, HTML5, CSS3, Git, GitHub, REST APIs" required>
+      </div>
+
+      <!-- ५. प्रोजेक्ट्स (Projects) -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-folder-open"></i> 5. Key Projects (ATS Loves Projects!)
+      </h3>
+      <div class="form-group">
+        <label>Project 1: Title & Tech Stack *</label>
+        <input type="text" name="project1_title" placeholder="e.g. Medical Distribution Management System | Flask, Python, MySQL" required>
+      </div>
+      <div class="form-group">
+        <label>Project 1: Bullet Points (What you did) *</label>
+        <textarea name="project1_desc" rows="2" placeholder="• Developed full-stack inventory and billing portal handling 500+ daily orders.&#10;• Implemented secure authentication and role-based access control." required>• Developed full-stack inventory and billing web application handling 500+ daily orders.
+• Implemented role-based access control and automated stock alerting system.</textarea>
+      </div>
+
+      <div class="form-group" style="margin-top: 1.5rem;">
+        <label>Project 2: Title & Tech Stack</label>
+        <input type="text" name="project2_title" placeholder="e.g. Online Grocery Web Application | Python, HTML, CSS, MySQL">
+      </div>
+      <div class="form-group">
+        <label>Project 2: Bullet Points</label>
+        <textarea name="project2_desc" rows="2" placeholder="• Created dynamic product catalog with real-time cart functionality.&#10;• Optimized database queries for fast search performance.">• Created dynamic product catalog with real-time cart and order placement functionality.
+• Integrated responsive UI ensuring seamless experience across mobile and desktop.</textarea>
+      </div>
+
+      <!-- ६. इंटर्नशिप / अनुभव -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-briefcase"></i> 6. Internship / Work Experience (Optional)
+      </h3>
+      <div class="form-group">
+        <label>Experience Details</label>
+        <textarea name="experience" rows="2" placeholder="Full Stack Developer Intern | Wolfox Pvt. Ltd., Kolhapur (Feb 2026 - May 2026)&#10;• Built production-ready Flask APIs and collaborated on responsive frontend modules."></textarea>
+      </div>
+
+      <!-- ७. सर्टिफिकेशन्स -->
+      <h3 style="color: var(--primary); margin: 2rem 0 1rem; border-bottom: 2px solid #eff6ff; padding-bottom: .5rem;">
+        <i class="fas fa-certificate"></i> 7. Certifications & Achievements
+      </h3>
+      <div class="form-group">
+        <label>Certificates</label>
+        <textarea name="certifications" rows="2" placeholder="• Python for Web Development Certified (Udemy / Coursera)&#10;• 1st Prize in Inter-College Web Designing Competition 2025">• Python Full Stack Web Development Specialization
+• Solved 100+ Coding Problems on LeetCode / HackerRank</textarea>
+      </div>
+
+      <div style="margin-top: 2.5rem; text-align: center;">
+        <button type="submit" class="btn" style="padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 8px;">
+          <i class="fas fa-magic"></i> Generate & Download ATS Resume
+        </button>
+      </div>
+
+    </form>
+  </div>
+</section>
+{% endblock %}

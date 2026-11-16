@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ r.name }} - ATS Resume</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #525659;
+      font-family: 'Times New Roman', Times, serif;
+      color: #000;
+      line-height: 1.35;
+      padding: 20px 0;
+    }
+
+    /* Floating Toolbar (प्रिंट करताना लपवला जाईल) */
+    .toolbar {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      padding: 10px 20px;
+      border-radius: 30px;
+      display: flex;
+      gap: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .btn-action {
+      background: #2563eb;
+      color: #fff;
+      border: 0;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: sans-serif;
+      font-size: 14px;
+    }
+    .btn-back { background: #475569; }
+    .btn-action:hover { opacity: 0.9; }
+
+    /* A4 Resume Page */
+    .resume-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 60px auto 20px;
+      background: #fff;
+      padding: 18mm 18mm;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    /* ATS Format Header */
+    .resume-header { text-align: center; border-bottom: 1.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
+    .resume-header h1 { font-size: 24pt; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: bold; }
+    .contact-line { font-size: 10pt; word-spacing: 2px; }
+    .contact-line a { color: #000; text-decoration: none; }
+
+    /* Sections */
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-bottom: 1px solid #000;
+      padding-bottom: 2px;
+      margin: 10px 0 6px;
+      letter-spacing: 0.5px;
+    }
+
+    p, li { font-size: 10pt; }
+    ul { padding-left: 18px; margin-top: 3px; }
+    li { margin-bottom: 3px; }
+
+    .item-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 10.5pt; }
+    .item-sub { display: flex; justify-content: space-between; font-style: italic; font-size: 10pt; margin-bottom: 3px; }
+
+    /* Print Settings (A4 PDF) */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .toolbar { display: none; }
+      .resume-page {
+        margin: 0;
+        box-shadow: none;
+        width: 100%;
+        padding: 12mm 15mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- डाउनलोड बटण टूलबार -->
+  <div class="toolbar">
+    <a href="{{ url_for('resume_builder') }}" class="btn-action btn-back"><i class="fas fa-arrow-left"></i> Edit Form</a>
+    <button onclick="window.print()" class="btn-action"><i class="fas fa-file-pdf"></i> Download ATS PDF</button>
+  </div>
+
+  <!-- A4 ATS Resume Container -->
+  <div class="resume-page">
+    
+    <!-- Header -->
+    <div class="resume-header">
+      <h1>{{ r.name }}</h1>
+      <div class="contact-line">
+        {{ r.location }} &middot; {{ r.phone }} &middot; <a href="mailto:{{ r.email }}">{{ r.email }}</a>
+        {% if r.linkedin %} &middot; <a href="{{ r.linkedin }}" target="_blank">LinkedIn</a>{% endif %}
+        {% if r.github %} &middot; <a href="{{ r.github }}" target="_blank">GitHub</a>{% endif %}
+      </div>
+    </div>
+
+    <!-- Summary -->
+    {% if r.summary %}
+    <div class="section-title">Professional Summary</div>
+    <p>{{ r.summary }}</p>
+    {% endif %}
+
+    <!-- Education -->
+    <div class="section-title">Education</div>
+    <div class="item-header">
+      <span>{{ r.college }}</span>
+      <span>{{ r.year }}</span>
+    </div>
+    <div class="item-sub">
+      <span>{{ r.education }}</span>
+    </div>
+
+    <!-- Skills -->
+    <div class="section-title">Technical Skills</div>
+    <p><b>Core Technologies & Tools:</b> {{ r.skills }}</p>
+
+    <!-- Projects -->
+    <div class="section-title">Key Projects</div>
+    
+    {% if r.project1_title %}
+    <div class="item-header">
+      <span>{{ r.project1_title }}</span>
+    </div>
+    <ul>
+      {% for line in r.project1_desc.split('\n') %}
+        {% if line.strip() %}
+          <li>{{ line.replace('•', '').strip() }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if r.project2_title %}
+    <div class="item-header" style="margin-top: 6px;">
+      <span>{{ r.project2_title }}</span>
+    </div>
+    <ul>
+      {% for line in r.project2_desc.split('\n') %}
+        {% if line.strip() %}
+          <li>{{ line.replace('•', '').strip() }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Experience / Internship -->
+    {% if r.experience %}
+    <div class="section-title">Experience & Internships</div>
+    <ul>
+      {% for line in r.experience.split('\n') %}
+        {% if line.strip() %}
+          <li>{{ line.replace('•', '').strip() }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- Certifications -->
+    {% if r.certifications %}
+    <div class="section-title">Certifications & Achievements</div>
+    <ul>
+      {% for line in r.certifications.split('\n') %}
+        {% if line.strip() %}
+          <li>{{ line.replace('•', '').strip() }}</li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+  </div>
+
+</body>
+</html>

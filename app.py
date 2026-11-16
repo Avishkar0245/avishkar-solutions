@@ -20,8 +20,8 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 # ---- SITE INFO ----
 SITE = {
     "name": "Avishkar Solutions",
-    "whatsapp": "91XXXXXXXXXX",  # <-- येथे तुमचा खरा 10 आकडी नंबर टाका
-    "email": "you@example.com",
+    "whatsapp": "91-9373510245",  # <-- येथे तुमचा खरा 10 आकडी नंबर टाका
+    "email": "avishkarsolutions19@gmai.com",
     "linkedin": "https://linkedin.com",
     "github": "https://github.com",
 }
@@ -435,6 +435,51 @@ def delete_enquiry(enquiry_id):
     flash("Enquiry deleted successfully.", "ok")
     return redirect(url_for("admin_dashboard"))
 
+# ---- ATS RESUME BUILDER ROUTE ----
+@app.route("/resume-builder", methods=["GET", "POST"])
+def resume_builder():
+    if request.method == "POST":
+        # विद्यार्थ्याचा डेटा मिळवणे
+        resume_data = {
+            "name": request.form.get("name", "").strip(),
+            "email": request.form.get("email", "").strip(),
+            "phone": request.form.get("phone", "").strip(),
+            "linkedin": request.form.get("linkedin", "").strip(),
+            "github": request.form.get("github", "").strip(),
+            "location": request.form.get("location", "").strip(),
+            "summary": request.form.get("summary", "").strip(),
+            "education": request.form.get("education", "").strip(),
+            "college": request.form.get("college", "").strip(),
+            "year": request.form.get("year", "").strip(),
+            "skills": request.form.get("skills", "").strip(),
+            "project1_title": request.form.get("project1_title", "").strip(),
+            "project1_desc": request.form.get("project1_desc", "").strip(),
+            "project2_title": request.form.get("project2_title", "").strip(),
+            "project2_desc": request.form.get("project2_desc", "").strip(),
+            "experience": request.form.get("experience", "").strip(),
+            "certifications": request.form.get("certifications", "").strip(),
+        }
+
+        # हा डेटा MongoDB मध्ये लीड म्हणून सेव्ह करा
+        if _db is not None and resume_data["name"] and resume_data["phone"]:
+            lead = {
+                "name": resume_data["name"],
+                "phone": resume_data["phone"],
+                "email": resume_data["email"],
+                "interest": "ATS Resume Builder (Created Resume)",
+                "message": f"College: {resume_data.get('college')} | Skills: {resume_data.get('skills')[:50]}",
+                "created_at": datetime.datetime.utcnow(),
+                "status": "New"
+            }
+            try:
+                _db.leads.insert_one(lead)
+            except Exception as e:
+                print("Lead save error from resume builder:", e)
+
+        # रिझ्युमे प्रिव्ह्यू पेज दाखवा
+        return render_template("resume_preview.html", r=resume_data)
+
+    return render_template("resume_builder.html")
 
 # ---- CHATBOT BLUEPRINT ----
 try:
