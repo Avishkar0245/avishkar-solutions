@@ -304,3 +304,193 @@ input:focus, select:focus, textarea:focus {
 @media(max-width: 768px) {
   .contact-wrapper, .about-grid, .form-row { grid-template-columns: 1fr; }
 }
+
+/* ========================================================
+   MODERN RESPONSIVE NAVBAR & MOBILE HAMBURGER MENU
+   ======================================================== */
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem clamp(1rem, 4vw, 3rem);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  display: block;
+}
+
+.nav-toggle {
+  display: none; /* Desktop वर लपवलेले राहील */
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-toggle:hover {
+  background: #e2e8f0;
+  color: #0b5cc0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+}
+
+.nav-item {
+  text-decoration: none;
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  color: #0b5cc0;
+  background: #f8fafc;
+}
+
+.nav-item.resume-highlight {
+  color: #0b5cc0;
+  font-weight: 600;
+}
+
+.nav-item.login-btn {
+  background: rgba(11, 92, 192, 0.08);
+  color: #0b5cc0;
+  font-weight: 600;
+}
+
+.nav-item.login-btn:hover {
+  background: #0b5cc0;
+  color: #ffffff;
+}
+
+.nav-item.user-btn {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.nav-item.logout-link {
+  color: #dc2626;
+}
+
+.nav-ask-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0b5cc0;
+  color: #fff;
+  border: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.nav-ask-ai:hover {
+  filter: brightness(1.1);
+}
+
+/* ==========================================
+   MOBILE & TABLET VIEW (@media max-width: 991px)
+   ========================================== */
+@media (max-width: 991px) {
+  .top {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .nav-header {
+    width: 100%;
+  }
+
+  .nav-toggle {
+    display: flex; /* मोबाईलवर हॅम्बर्गर बटण दिसेल */
+  }
+
+  .nav-links {
+    display: none; /* डिफॉल्ट मोबाईलवर बंद राहील */
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 6px;
+    padding-top: 1rem;
+    margin-top: 0.8rem;
+    border-top: 1px solid #e2e8f0;
+    animation: navSlideDown 0.25s ease-out;
+  }
+
+  .nav-links.active {
+    display: flex; /* ☰ वर क्लिक केल्यावर उघडेल */
+  }
+
+  .nav-item {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  .nav-item i {
+    width: 22px;
+    text-align: center;
+    color: #0b5cc0;
+  }
+
+  .nav-ask-ai {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+}
+
+@keyframes navSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
