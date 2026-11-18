@@ -33,6 +33,17 @@
     <a href="{{ url_for('portfolio') }}"><i class="fas fa-laptop-code"></i> Portfolio</a>
     <a href="{{ url_for('about') }}"><i class="fas fa-user"></i> About</a>
     <a href="{{ url_for('contact') }}"><i class="fas fa-paper-plane"></i> Contact</a>
+        <!-- जर विद्यार्थी लॉगइन असेल तर -->
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('user_dashboard') }}" style="color: #059669; font-weight: 700;">
+        <i class="fas fa-user-circle"></i> {{ session.get('user_name') }}
+      </a>
+      <a href="{{ url_for('user_logout') }}" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+    {% else %}
+      <a href="{{ url_for('user_login') }}" style="font-weight: 600;">
+        <i class="fas fa-sign-in-alt"></i> Student Login
+      </a>
+    {% endif %}
     <button type="button" class="btn small" data-open-chat><i class="fas fa-comment-dots"></i> Ask AI</button>
   </nav>
 </header>

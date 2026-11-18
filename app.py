@@ -2,13 +2,12 @@ import os, json, datetime
 from bson import ObjectId
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
 import hmac
 from pymongo import MongoClient
 import certifi
-
-
+import urllib.parse
 
 load_dotenv()
 app = Flask(__name__)
@@ -20,8 +19,8 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 # ---- SITE INFO ----
 SITE = {
     "name": "Avishkar Solutions",
-    "whatsapp": "91-9373510245",  # <-- येथे तुमचा खरा 10 आकडी नंबर टाका
-    "email": "avishkarsolutions19@gmai.com",
+    "whatsapp": "91-9373510245",
+    "email": "avishkarsolutions19@gmail.com",
     "linkedin": "https://linkedin.com",
     "github": "https://github.com",
 }
@@ -94,8 +93,6 @@ def get_all_reviews():
     return DEFAULT_REVIEWS
 
 
-import urllib.parse
-
 # WhatsApp नंबर क्लीन करणारा आणि URL एनकोड करणारा फिल्टर
 @app.template_filter('wa_phone')
 def wa_phone_filter(phone):
@@ -139,7 +136,13 @@ except Exception as e:
 def get_all_projects():
     if _db is not None:
         try:
-            projs = list(_db.projects.find().sort("_id", -1))
+            # फक्त Approved किंवा ॲडमिनने स्वतः टाकलेले प्रोजेक्ट्स आणा
+            projs = list(_db.projects.find({
+                "$or": [
+                    {"status": "Approved"},
+                    {"status": {"$exists": False}}
+                ]
+            }).sort("_id", -1))
             if projs:
                 return projs
         except Exception as e:
@@ -169,7 +172,7 @@ def save_lead(lead):
         print("Enquiry saved in local JSON file.")
 
 
-# ---- ADMIN AUTH DECORATOR (हा आधी असणे गरजेचे आहे) ----
+# ---- ADMIN AUTH DECORATOR ----
 def admin_required(view_function):
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
@@ -184,12 +187,13 @@ def inject_site():
     return {"site": SITE}
 
 
-# ---- USER ROUTES ----
+# ---- USER PUBLIC ROUTES ----
 @app.route("/")
 def home():
     projects = get_all_projects()
     reviews = get_all_reviews()
     return render_template("home.html", services=SERVICES, projects=projects[:2], reviews=reviews)
+
 @app.route("/services")
 def services():
     return render_template("services.html", services=SERVICES)
@@ -258,6 +262,7 @@ def admin_dashboard():
     total_enquiries = 0
     new_enquiries = 0
     enquiries = []
+    pending_projects = []
     db_error = None
 
     if _db is not None:
@@ -267,8 +272,12 @@ def admin_dashboard():
                 "$or": [{"status": "New"}, {"status": {"$exists": False}}, {"status": ""}]
             })
             enquiries = list(_db.leads.find().sort("created_at", -1).limit(50))
+            
+            # विद्यार्थ्यांचे मंजुरीची वाट पाहणारे Pending प्रोजेक्ट्स
+            pending_projects = list(_db.projects.find({"status": "Pending"}).sort("_id", -1))
         except Exception as e:
             db_error = str(e)
+            print("Admin Dashboard Error:", e)
     else:
         db_error = "MongoDB is disconnected. Showing backup data."
 
@@ -294,53 +303,36 @@ def admin_dashboard():
         total_projects=len(projects),
         enquiries=enquiries,
         projects=projects,
+        pending_projects=pending_projects,
         about=about_data,
         reviews=get_all_reviews(),
         db_error=db_error
     )
 
-# नवीन रिव्ह्यू ॲड करणे
-@app.route("/admin/review/add", methods=["POST"])
+
+# ---- ADMIN APPROVE & REJECT PROJECT ----
+@app.route("/admin/project/approve/<project_id>", methods=["POST"])
 @admin_required
-def admin_add_review():
-    if _db is None:
-        flash("MongoDB is not connected!", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    name = request.form.get("name", "").strip()
-    role = request.form.get("role", "").strip()
-    project = request.form.get("project", "").strip()
-    rating = int(request.form.get("rating", 5))
-    comment = request.form.get("comment", "").strip()
-
-    if not name or not comment:
-        flash("Name and review comment are required!", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    new_rev = {
-        "name": name,
-        "role": role,
-        "project": project,
-        "rating": rating,
-        "comment": comment,
-        "created_at": datetime.datetime.utcnow()
-    }
-
-    _db.reviews.insert_one(new_rev)
-    flash("Student review added successfully to website!", "ok")
+def admin_approve_project(project_id):
+    if _db is not None and ObjectId.is_valid(project_id):
+        _db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$set": {"status": "Approved"}}
+        )
+        flash("Project approved! It is now live on the website.", "ok")
     return redirect(url_for("admin_dashboard"))
 
-# रिव्ह्यू डिलीट करणे
-@app.route("/admin/review/delete/<review_id>", methods=["POST"])
+@app.route("/admin/project/reject/<project_id>", methods=["POST"])
 @admin_required
-def admin_delete_review(review_id):
-    if _db is None or not ObjectId.is_valid(review_id):
-        flash("Invalid request or MongoDB not connected.", "error")
-        return redirect(url_for("admin_dashboard"))
-
-    _db.reviews.delete_one({"_id": ObjectId(review_id)})
-    flash("Review deleted successfully.", "ok")
+def admin_reject_project(project_id):
+    if _db is not None and ObjectId.is_valid(project_id):
+        _db.projects.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$set": {"status": "Rejected"}}
+        )
+        flash("Project rejected.", "error")
     return redirect(url_for("admin_dashboard"))
+
 
 # ---- CMS: ADD & DELETE PROJECT ----
 @app.route("/admin/project/add", methods=["POST"])
@@ -384,6 +376,49 @@ def admin_delete_project(project_id):
 
     _db.projects.delete_one({"_id": ObjectId(project_id)})
     flash("Project deleted successfully.", "ok")
+    return redirect(url_for("admin_dashboard"))
+
+
+# ---- CMS: REVIEWS ----
+@app.route("/admin/review/add", methods=["POST"])
+@admin_required
+def admin_add_review():
+    if _db is None:
+        flash("MongoDB is not connected!", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    name = request.form.get("name", "").strip()
+    role = request.form.get("role", "").strip()
+    project = request.form.get("project", "").strip()
+    rating = int(request.form.get("rating", 5))
+    comment = request.form.get("comment", "").strip()
+
+    if not name or not comment:
+        flash("Name and review comment are required!", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    new_rev = {
+        "name": name,
+        "role": role,
+        "project": project,
+        "rating": rating,
+        "comment": comment,
+        "created_at": datetime.datetime.utcnow()
+    }
+
+    _db.reviews.insert_one(new_rev)
+    flash("Student review added successfully to website!", "ok")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/review/delete/<review_id>", methods=["POST"])
+@admin_required
+def admin_delete_review(review_id):
+    if _db is None or not ObjectId.is_valid(review_id):
+        flash("Invalid request or MongoDB not connected.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    _db.reviews.delete_one({"_id": ObjectId(review_id)})
+    flash("Review deleted successfully.", "ok")
     return redirect(url_for("admin_dashboard"))
 
 
@@ -435,11 +470,11 @@ def delete_enquiry(enquiry_id):
     flash("Enquiry deleted successfully.", "ok")
     return redirect(url_for("admin_dashboard"))
 
+
 # ---- ATS RESUME BUILDER ROUTE ----
 @app.route("/resume-builder", methods=["GET", "POST"])
 def resume_builder():
     if request.method == "POST":
-        # विद्यार्थ्याचा डेटा मिळवणे
         resume_data = {
             "name": request.form.get("name", "").strip(),
             "email": request.form.get("email", "").strip(),
@@ -460,7 +495,6 @@ def resume_builder():
             "certifications": request.form.get("certifications", "").strip(),
         }
 
-        # हा डेटा MongoDB मध्ये लीड म्हणून सेव्ह करा
         if _db is not None and resume_data["name"] and resume_data["phone"]:
             lead = {
                 "name": resume_data["name"],
@@ -476,10 +510,157 @@ def resume_builder():
             except Exception as e:
                 print("Lead save error from resume builder:", e)
 
-        # रिझ्युमे प्रिव्ह्यू पेज दाखवा
         return render_template("resume_preview.html", r=resume_data)
 
     return render_template("resume_builder.html")
+
+
+# ==========================================
+# USER (STUDENT) AUTHENTICATION & DASHBOARD
+# ==========================================
+
+def user_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("user_id"):
+            flash("Please log in to access your dashboard.", "error")
+            return redirect(url_for("user_login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+# १. विद्यार्थी रजिस्ट्रेशन
+@app.route("/register", methods=["GET", "POST"])
+def user_register():
+    if session.get("user_id"):
+        return redirect(url_for("user_dashboard"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+        college = request.form.get("college", "").strip()
+        github = request.form.get("github", "").strip()
+
+        if not name or not email or not password:
+            flash("Name, email and password are required!", "error")
+            return render_template("user_register.html")
+
+        if _db is not None:
+            existing = _db.users.find_one({"email": email})
+            if existing:
+                flash("This email is already registered! Please login.", "error")
+                return redirect(url_for("user_login"))
+
+            user_doc = {
+                "name": name,
+                "email": email,
+                "password_hash": generate_password_hash(password),
+                "college": college,
+                "github": github,
+                "created_at": datetime.datetime.utcnow()
+            }
+            res = _db.users.insert_one(user_doc)
+            
+            session["user_id"] = str(res.inserted_id)
+            session["user_name"] = name
+            session["user_email"] = email
+            flash(f"Welcome, {name}! Your account has been created.", "ok")
+            return redirect(url_for("user_dashboard"))
+        else:
+            flash("Database offline. Please try again later.", "error")
+
+    return render_template("user_register.html")
+
+
+# २. विद्यार्थी लॉगिन
+@app.route("/login", methods=["GET", "POST"])
+def user_login():
+    if session.get("user_id"):
+        return redirect(url_for("user_dashboard"))
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if _db is not None:
+            user = _db.users.find_one({"email": email})
+            if user and check_password_hash(user["password_hash"], password):
+                session["user_id"] = str(user["_id"])
+                session["user_name"] = user["name"]
+                session["user_email"] = user["email"]
+                flash("Login successful! Welcome back.", "ok")
+                return redirect(url_for("user_dashboard"))
+
+        flash("Invalid email or password!", "error")
+
+    return render_template("user_login.html")
+
+
+# ३. विद्यार्थी लॉगआऊट
+@app.route("/logout")
+def user_logout():
+    session.pop("user_id", None)
+    session.pop("user_name", None)
+    session.pop("user_email", None)
+    flash("You have been logged out successfully.", "ok")
+    return redirect(url_for("home"))
+
+
+# ४. विद्यार्थी डॅशबोर्ड
+@app.route("/user/dashboard")
+@user_login_required
+def user_dashboard():
+    user_projects = []
+    user_info = None
+
+    if _db is not None:
+        user_info = _db.users.find_one({"_id": ObjectId(session["user_id"])})
+        user_projects = list(_db.projects.find({"user_id": session["user_id"]}).sort("_id", -1))
+
+    return render_template("user_dashboard.html", user=user_info, projects=user_projects)
+
+
+# ५. विद्यार्थ्याने नवीन प्रोजेक्ट सबमिट करणे (Status: Pending)
+@app.route("/user/project/submit", methods=["POST"])
+@user_login_required
+def user_submit_project():
+    if _db is None:
+        flash("Database is offline. Try again later.", "error")
+        return redirect(url_for("user_dashboard"))
+
+    title = request.form.get("title", "").strip()
+    text = request.form.get("text", "").strip()
+    tags_raw = request.form.get("tags", "").strip()
+    github = request.form.get("github", "").strip()
+    demo = request.form.get("demo", "").strip()
+
+    if not title or not text or not github:
+        flash("Title, description, and your GitHub repository link are required!", "error")
+        return redirect(url_for("user_dashboard"))
+
+    tags = [t.strip() for t in tags_raw.split(",") if t.strip()]
+
+    user = _db.users.find_one({"_id": ObjectId(session["user_id"])})
+
+    new_project = {
+        "title": title,
+        "text": text,
+        "tags": tags,
+        "github": github,
+        "demo": demo,
+        "user_id": session["user_id"],
+        "user_name": user.get("name", "Student Developer"),
+        "user_college": user.get("college", "College Student"),
+        "user_github": user.get("github", github),
+        "status": "Pending",
+        "created_at": datetime.datetime.utcnow()
+    }
+
+    _db.projects.insert_one(new_project)
+    flash("Project submitted successfully! It is now Pending for admin review. Once approved, it will be published on the live website.", "ok")
+    return redirect(url_for("user_dashboard"))
+
 
 # ---- CHATBOT BLUEPRINT ----
 try:

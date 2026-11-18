@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}My Student Dashboard | {{ site.name }}{% endblock %}
+
+{% block content %}
+<section class="block" style="padding-top: 2rem;">
+  
+  <!-- वेलकम हेडर -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 2rem; background: #fff; padding: 1.8rem; border-radius: var(--radius); border: 1px solid var(--line);">
+    <div>
+      <span class="sub-title">STUDENT DEVELOPER DASHBOARD</span>
+      <h1 style="font-size: 2rem; margin: 0;">Welcome, {{ user.name }}! 👋</h1>
+      <p style="color: var(--mute); margin-top: 4px;"><i class="fas fa-university"></i> {{ user.college }} &middot; <a href="{{ user.github }}" target="_blank"><i class="fab fa-github"></i> Your GitHub</a></p>
+    </div>
+    <a href="{{ url_for('user_logout') }}" class="btn ghost small"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 2rem;">
+    
+    <!-- डावी बाजू: नवीन प्रोजेक्ट सबमिट करण्याचा फॉर्म -->
+    <div class="card" style="align-self: start;">
+      <h3 style="color: var(--navy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-cloud-upload-alt" style="color: var(--primary);"></i> Submit a Project
+      </h3>
+      <p style="color: var(--mute); font-size: .88rem; margin-bottom: 1.5rem;">
+        Submit your project code and demo. Once reviewed and accepted by mentor Avishkar, it will be published on the live showcase!
+      </p>
+
+      <form method="POST" action="{{ url_for('user_submit_project') }}">
+        <div class="form-group">
+          <label>Project Title *</label>
+          <input type="text" name="title" placeholder="e.g. Hospital Management System" required>
+        </div>
+
+        <div class="form-group">
+          <label>Tech Stack Tags (Comma separated) *</label>
+          <input type="text" name="tags" placeholder="e.g. Python, Flask, MySQL, HTML/CSS" required>
+        </div>
+
+        <div class="form-group">
+          <label>Short Description (What it does) *</label>
+          <textarea name="text" rows="3" placeholder="Explain the key features, architecture, and who it helps..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Your GitHub Repository URL *</label>
+          <input type="url" name="github" placeholder="https://github.com/your-username/repo-name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Live Demo URL (Optional)</label>
+          <input type="url" name="demo" placeholder="https://your-demo-app.onrender.com">
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: .85rem;">
+          <i class="fas fa-paper-plane"></i> Submit for Review
+        </button>
+      </form>
+    </div>
+
+    <!-- उजवी बाजू: सबमिट केलेल्या प्रोजेक्ट्सची लिस्ट आणि लाईव्ह स्टेटस -->
+    <div>
+      <h3 style="color: var(--navy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-tasks" style="color: var(--primary);"></i> My Submitted Projects ({{ projects|length }})
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for p in projects %}
+{% if p.status == 'Approved' %}
+<div class="card" style="border-left: 5px solid #10b981;">
+{% elif p.status == 'Rejected' %}
+<div class="card" style="border-left: 5px solid #ef4444;">
+{% else %}
+<div class="card" style="border-left: 5px solid #f59e0b;">
+{% endif %}          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: .6rem;">
+            <h4 style="font-size: 1.2rem; margin: 0; color: var(--navy);">{{ p.title }}</h4>
+            
+            <!-- रंगीत स्टेटस बॅजेस -->
+            {% if p.status == 'Approved' %}
+              <span style="background: rgba(16, 185, 129, 0.15); color: #047857; border: 1px solid #10b981; padding: 4px 10px; border-radius: 20px; font-size: .8rem; font-weight: 700;">
+                🟢 Approved & Live
+              </span>
+            {% elif p.status == 'Rejected' %}
+              <span style="background: rgba(239, 68, 68, 0.15); color: #b91c1c; border: 1px solid #ef4444; padding: 4px 10px; border-radius: 20px; font-size: .8rem; font-weight: 700;">
+                🔴 Needs Revision
+              </span>
+            {% else %}
+              <span style="background: rgba(245, 158, 11, 0.15); color: #b45309; border: 1px solid #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: .8rem; font-weight: 700;">
+                🟡 Under Review
+              </span>
+            {% endif %}
+          </div>
+
+          <p style="color: var(--mute); font-size: .92rem; margin-bottom: 1rem;">{{ p.text }}</p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px solid var(--line); padding-top: .8rem;">
+            <div class="tags" style="margin: 0;">
+              {% for t in p.tags %}<span>{{ t }}</span>{% endfor %}
+            </div>
+            <div>
+              <a href="{{ p.github }}" target="_blank" style="font-size: .88rem; font-weight: 600;"><i class="fab fa-github"></i> Repository</a>
+              {% if p.status == 'Approved' %}
+                &middot; <a href="{{ url_for('portfolio') }}" target="_blank" style="color: #047857; font-weight: 700;">View Live on Website &rarr;</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 3rem; color: var(--mute);">
+          <i class="fas fa-folder-open" style="font-size: 2.5rem; margin-bottom: 1rem; color: #cbd5e1;"></i>
+          <p>You haven't submitted any projects yet.</p>
+          <p style="font-size: .88rem;">Fill the form on the left to submit your first project for showcase!</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

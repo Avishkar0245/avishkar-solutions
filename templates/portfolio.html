@@ -23,12 +23,22 @@
           {% endif %}
         </div>
       </div>
+      
       <h3>{{ p.title }}</h3>
       <p>{{ p.text }}</p>
       
       <div class="tags" style="margin-top: 1.2rem;">
         {% for t in p.tags %}<span>{{ t }}</span>{% endfor %}
       </div>
+
+      <!-- जर प्रोजेक्ट विद्यार्थ्याने बनवला असेल तर (Loop च्या आत) -->
+      {% if p.get('user_name') %}
+      <div style="margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--mute);">
+        <i class="fas fa-user-graduate" style="color: var(--primary);"></i> 
+        Built by: <b style="color: var(--navy);">{{ p.get('user_name') }}</b> ({{ p.get('user_college') }})
+      </div>
+      {% endif %}
+
     </div>
     {% endfor %}
   </div>
