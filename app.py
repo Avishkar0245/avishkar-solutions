@@ -42,10 +42,12 @@ SERVICES = [
 PROJECTS = [
     {"title": "Medical Distribution Management System",
      "text": "A Complete Management System for Medical Distributors, Covering Inventory Management, Billing, Purchases, and Sales.",
-     "tags": ["Flask", "Python", "MySQL"], "github": "#", "demo": ""},
+     "tags": ["Flask", "Python", "MySQL"], "github": "#", "demo": "",
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80"},
     {"title": "GroceryMart",
      "text": "Full-stack grocery web app.",
-     "tags": ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "MySQL"], "github": "#", "demo": ""},
+     "tags": ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "MySQL"], "github": "#", "demo": "",
+            "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80"},
 ]
 
 # Deafault About information (backup)
@@ -347,6 +349,7 @@ def admin_add_project():
     tags_raw = request.form.get("tags", "").strip()
     github = request.form.get("github", "#").strip()
     demo = request.form.get("demo", "").strip()
+    image = request.form.get("image", "").strip()
 
     if not title or not text:
         flash("Project title and description are required!", "error")
@@ -634,6 +637,7 @@ def user_submit_project():
     tags_raw = request.form.get("tags", "").strip()
     github = request.form.get("github", "").strip()
     demo = request.form.get("demo", "").strip()
+    image = request.form.get("image", "").strip()
 
     if not title or not text or not github:
         flash("Title, description, and your GitHub repository link are required!", "error")

@@ -4,7 +4,7 @@
 {% block content %}
 <section class="block" style="padding-top: 2rem;">
   
-  <!-- वेलकम हेडर -->
+  <!--Welcome headers-->
   <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 2rem; background: #fff; padding: 1.8rem; border-radius: var(--radius); border: 1px solid var(--line);">
     <div>
       <span class="sub-title"> DEVELOPER DASHBOARD</span>
@@ -16,7 +16,7 @@
 
   <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 2rem;">
     
-    <!-- डावी बाजू: नवीन प्रोजेक्ट सबमिट करण्याचा फॉर्म -->
+    <!-- left side: new project subbmited forms -->
     <div class="card" style="align-self: start;">
       <h3 style="color: var(--navy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px;">
         <i class="fas fa-cloud-upload-alt" style="color: var(--primary);"></i> Submit a Project
@@ -50,6 +50,9 @@
           <label>Live Demo URL (Optional)</label>
           <input type="url" name="demo" placeholder="https://your-demo-app.onrender.com">
         </div>
+        <label>Project Screenshot / Demo Image URL (Optional)
+          <input type="url" name="image" placeholder="https://... (GitHub raw or image link)">
+        </label>
 
         <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: .85rem;">
           <i class="fas fa-paper-plane"></i> Submit for Review
@@ -57,7 +60,7 @@
       </form>
     </div>
 
-    <!-- उजवी बाजू: सबमिट केलेल्या प्रोजेक्ट्सची लिस्ट आणि लाईव्ह स्टेटस -->
+    <!-- Right Side:Submitted Projects list and Live Status -->
     <div>
       <h3 style="color: var(--navy); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 8px;">
         <i class="fas fa-tasks" style="color: var(--primary);"></i> My Submitted Projects ({{ projects|length }})
