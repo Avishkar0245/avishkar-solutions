@@ -25,7 +25,7 @@ SITE = {
     "github": "https://github.com",
 }
 
-# डिफॉल्ट सर्व्हिसेस
+# Deafault services
 SERVICES = [
     {"title": "Project Mentoring",
      "text": "Final-year and MCA projects (Flask, web apps). Guidance from idea to coding to deployment.",
@@ -38,7 +38,7 @@ SERVICES = [
      "price": "Contact for price"},
 ]
 
-# डिफॉल्ट प्रोजेक्ट्स (बॅकअप)
+# Deafault services (backup)
 PROJECTS = [
     {"title": "Medical Distribution Management System",
      "text": "A Complete Management System for Medical Distributors, Covering Inventory Management, Billing, Purchases, and Sales.",
@@ -48,7 +48,7 @@ PROJECTS = [
      "tags": ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "MySQL"], "github": "#", "demo": ""},
 ]
 
-# डिफॉल्ट About माहिती (बॅकअप)
+# Deafault About information (backup)
 DEFAULT_ABOUT = {
     "headline": "Hi, I'm Avishkar.",
     "intro": "MCA student, Full-Stack Developer, and Mentor helping freshers bridge the gap between college theory and industry-standard projects.",
@@ -57,10 +57,10 @@ DEFAULT_ABOUT = {
     "skills": "Python, Flask, MongoDB Atlas, MySQL, JavaScript, HTML5, CSS3, Git, REST APIs"
 }
 
-# डिफॉल्ट विद्यार्थ्यांचे रिव्ह्यू (बॅकअप)
+# deafualt Students Review (Backup)
 DEFAULT_REVIEWS = [
     {
-        "name": "Prathamesh Kulkarni",
+        "name": "Harshad Patil",
         "role": "MCA Final Year, Kolhapur",
         "project": "Flask Medical Store App",
         "rating": 5,
@@ -93,7 +93,7 @@ def get_all_reviews():
     return DEFAULT_REVIEWS
 
 
-# WhatsApp नंबर क्लीन करणारा आणि URL एनकोड करणारा फिल्टर
+# WhatsApp number clean and URL AN code  Filtering
 @app.template_filter('wa_phone')
 def wa_phone_filter(phone):
     if not phone:
@@ -136,7 +136,7 @@ except Exception as e:
 def get_all_projects():
     if _db is not None:
         try:
-            # फक्त Approved किंवा ॲडमिनने स्वतः टाकलेले प्रोजेक्ट्स आणा
+            # only Approved And  Admin own takes project
             projs = list(_db.projects.find({
                 "$or": [
                     {"status": "Approved"},
@@ -273,7 +273,7 @@ def admin_dashboard():
             })
             enquiries = list(_db.leads.find().sort("created_at", -1).limit(50))
             
-            # विद्यार्थ्यांचे मंजुरीची वाट पाहणारे Pending प्रोजेक्ट्स
+            # Student Approval Wait for Pending project
             pending_projects = list(_db.projects.find({"status": "Pending"}).sort("_id", -1))
         except Exception as e:
             db_error = str(e)
@@ -529,7 +529,7 @@ def user_login_required(f):
     return decorated_function
 
 
-# १. विद्यार्थी रजिस्ट्रेशन
+# १. Student Register
 @app.route("/register", methods=["GET", "POST"])
 def user_register():
     if session.get("user_id"):
@@ -573,7 +573,7 @@ def user_register():
     return render_template("user_register.html")
 
 
-# २. विद्यार्थी लॉगिन
+# २. Student Login
 @app.route("/login", methods=["GET", "POST"])
 def user_login():
     if session.get("user_id"):
@@ -597,7 +597,7 @@ def user_login():
     return render_template("user_login.html")
 
 
-# ३. विद्यार्थी लॉगआऊट
+# 3. student logout
 @app.route("/logout")
 def user_logout():
     session.pop("user_id", None)
@@ -607,7 +607,7 @@ def user_logout():
     return redirect(url_for("home"))
 
 
-# ४. विद्यार्थी डॅशबोर्ड
+# 4. Student dashboard
 @app.route("/user/dashboard")
 @user_login_required
 def user_dashboard():
@@ -621,7 +621,7 @@ def user_dashboard():
     return render_template("user_dashboard.html", user=user_info, projects=user_projects)
 
 
-# ५. विद्यार्थ्याने नवीन प्रोजेक्ट सबमिट करणे (Status: Pending)
+# ५. student new project submited (Status: Pending)
 @app.route("/user/project/submit", methods=["POST"])
 @user_login_required
 def user_submit_project():

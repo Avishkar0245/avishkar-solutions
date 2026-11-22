@@ -494,3 +494,581 @@ input:focus, select:focus, textarea:focus {
     transform: translateY(0);
   }
 }
+
+/* =====================================================
+   AVISHKAR SOLUTIONS
+   GTA 6 + PROFESSIONAL IT COMPANY THEME
+   ===================================================== */
+
+/* 1. NEW COLOR PALETTE */
+
+:root {
+  --ink: #fff1dc;
+  --navy: #17152b;
+  --primary: #b44bce;
+  --primary-hover: #d45be5;
+  --teal: #ff885f;
+  --bg: #0c0d1b;
+  --card-bg: #19182d;
+  --line: rgba(204, 70, 160, 0.22);
+  --mute: #b5aec9;
+
+  --shadow-sm: 0 4px 15px rgba(0,0,0,.25);
+  --shadow-md: 0 8px 30px rgba(125,50,180,.20);
+  --shadow-lg: 0 15px 40px rgba(204,70,160,.25);
+
+  --radius: 16px;
+}
+
+/* 2. GLOBAL BACKGROUND */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(129,61,187,.20), transparent 40%),
+    radial-gradient(ellipse at 85% 35%, rgba(204,70,160,.12), transparent 40%),
+    #0c0d1b !important;
+
+  color: var(--ink) !important;
+}
+
+h1, h2, h3 {
+  color: #fff1dc !important;
+}
+
+a {
+  color: #e38ae9;
+}
+
+a:hover {
+  color: #ff885f;
+}
+
+/* 3. NAVBAR */
+
+.top {
+  background: rgba(12,13,27,.88) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(204,70,160,.25) !important;
+  box-shadow: 0 5px 25px rgba(0,0,0,.25);
+}
+
+.nav-item {
+  color: #e5dced !important;
+}
+
+.nav-item:hover {
+  color: #ff91d5 !important;
+  background: rgba(204,70,160,.13) !important;
+}
+
+.nav-item.resume-highlight {
+  color: #ff91d5 !important;
+}
+
+.nav-item.login-btn {
+  background: rgba(129,61,187,.22) !important;
+  color: #e9b5ff !important;
+}
+
+.nav-item.login-btn:hover {
+  background: #813dbb !important;
+  color: white !important;
+}
+
+.nav-item.user-btn {
+  background: rgba(14,165,233,.15) !important;
+  color: #80d8ff !important;
+}
+
+.nav-item.logout-link {
+  color: #ff7777 !important;
+}
+
+.nav-ask-ai {
+  background: linear-gradient(110deg,#813dbb,#cc46a0) !important;
+  box-shadow: 0 0 18px rgba(204,70,160,.3);
+  border-radius: 10px;
+}
+
+.nav-toggle {
+  background: #25213d !important;
+  color: #fff !important;
+  border: 1px solid #813dbb !important;
+}
+
+/* 4. HERO SECTION */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+
+
+.hero h1 {
+  background: linear-gradient(
+    100deg,
+    #fff1dc 10%,
+    #e18be9 55%,
+    #ff885f 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.lead {
+  color: #c2b8d4 !important;
+}
+
+.badge {
+  background: rgba(129,61,187,.18) !important;
+  color: #e8a4ff !important;
+  border: 1px solid rgba(204,70,160,.4) !important;
+}
+
+/* 5. BUTTONS */
+
+.btn {
+  background: linear-gradient(110deg,#813dbb,#cc46a0,#ff885f);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(204,70,160,.28);
+  transition: all .3s ease;
+}
+
+.btn:hover {
+  background: linear-gradient(110deg,#a44bd0,#e65eaf,#ff9c70);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(204,70,160,.45);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid #cc46a0;
+  color: #f1b1e9 !important;
+}
+
+.btn.ghost:hover {
+  background: rgba(204,70,160,.16);
+}
+
+.btn.white-btn {
+  background: #fff1dc;
+  color: #21152e !important;
+}
+
+/* 6. ROADMAP CARD */
+
+.path-card {
+  background: linear-gradient(
+    145deg,
+    rgba(37,33,65,.95),
+    rgba(22,20,43,.95)
+  ) !important;
+  border: 1px solid rgba(204,70,160,.3);
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+  border-radius: 20px;
+}
+
+/* ======================================
+   PREMIUM 3D FLOATING SPHERE
+   AVISHKAR SOLUTIONS
+   ====================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 80% 50%,
+      rgba(129,61,187,.22),
+      transparent 50%
+    ),
+    linear-gradient(120deg,#0c0d1b,#19142d,#25152e);
+}
+
+/* 3D Sphere */
+
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+
+  width: clamp(200px, 29vw, 350px);
+  aspect-ratio: 1;
+  right: 5%;
+  top: 50%;
+
+  transform: translateY(-50%);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      rgba(255,255,255,.95) 0%,
+      rgba(255,180,230,.7) 5%,
+      transparent 17%
+    ),
+    radial-gradient(
+      circle at 35% 35%,
+      #ff9acb 0%,
+      #cc46a0 22%,
+      #813dbb 48%,
+      #34245d 72%,
+      #111124 100%
+    );
+
+  box-shadow:
+    inset -25px -25px 50px rgba(0,0,0,.65),
+    inset 10px 10px 30px rgba(255,255,255,.25),
+    0 0 35px rgba(204,70,160,.45),
+    0 0 90px rgba(129,61,187,.35);
+
+  animation: sphereFloat 7s ease-in-out infinite;
+}
+
+/* Floating Animation */
+
+@keyframes sphereFloat {
+  0%,100% {
+    transform: translateY(-50%) translateX(0) rotate(-5deg);
+  }
+
+  50% {
+    transform: translateY(calc(-50% - 18px))
+      translateX(-8px) rotate(5deg);
+  }
+}
+
+/* Content Above Sphere */
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Mobile */
+
+@media(max-width:768px) {
+  .hero::after {
+    width: 190px;
+    right: -65px;
+    top: 18%;
+    opacity: .55;
+  }
+}
+
+/* Reduced Motion */
+
+@media(prefers-reduced-motion:reduce) {
+  .hero::after {
+    animation: none;
+  }
+}
+
+/* Accessibility */
+
+@media(prefers-reduced-motion:reduce) {
+  .hero::before,
+  .hero::after {
+    animation: none;
+  }
+}
+
+
+.path {
+  border-left-color: #cc46a0;
+}
+
+.path li::before {
+  background: #ff885f;
+  border-color: #21152e;
+  box-shadow: 0 0 15px #cc46a0;
+}
+
+.path b {
+  color: #fff1dc;
+}
+
+.path span {
+  color: #b5aec9;
+}
+
+/* 7. STATS BAR */
+
+.stats-bar {
+  background: linear-gradient(135deg,#1b1933,#25203d);
+  border: 1px solid rgba(204,70,160,.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  border-radius: 20px;
+}
+
+.stat-item h3 {
+  color: #ff91d5 !important;
+  text-shadow: 0 0 18px rgba(204,70,160,.5);
+}
+
+.stat-item p {
+  color: #c2b8d4;
+}
+
+/* 8. SECTION HEADINGS */
+
+.block {
+  border-top: 1px solid rgba(204,70,160,.18);
+}
+
+.sub-title {
+  color: #ff885f;
+  letter-spacing: .12em;
+}
+
+.section-header {
+  margin-bottom: 2.5rem;
+}
+
+/* 9. 3D SERVICE & PROJECT CARDS */
+
+.card {
+  background: linear-gradient(
+    145deg,
+    rgba(37,35,67,.96),
+    rgba(21,20,41,.98)
+  ) !important;
+
+  border: 1px solid rgba(204,70,160,.22) !important;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.3);
+  transition: all .35s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px) perspective(1000px) rotateX(2deg);
+  border-color: #cc46a0 !important;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.4),
+    0 0 25px rgba(204,70,160,.18);
+}
+
+.card-icon {
+  background: linear-gradient(135deg,#813dbb,#cc46a0) !important;
+  color: white !important;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px rgba(204,70,160,.3);
+}
+
+.card h3 {
+  color: #fff1dc !important;
+}
+
+.card p {
+  color: #bdb3d0 !important;
+}
+
+.card-link {
+  color: #ff91d5 !important;
+}
+
+/* 10. PROJECT DESIGN */
+
+.project-header {
+  color: #ff885f;
+}
+
+.project-links a {
+  color: #c2b8d4;
+}
+
+.project-links a:hover {
+  color: #ff91d5;
+}
+
+.tags span {
+  background: rgba(129,61,187,.2);
+  color: #e8b7ff;
+  border: 1px solid rgba(204,70,160,.2);
+  border-radius: 20px;
+}
+
+/* 11. CTA BANNER */
+
+.cta-banner {
+  background:
+    radial-gradient(circle at 10% 10%,rgba(204,70,160,.3),transparent 40%),
+    linear-gradient(120deg,#21152f,#432052,#17152b) !important;
+
+  border: 1px solid rgba(204,70,160,.4);
+  box-shadow: 0 15px 40px rgba(0,0,0,.4);
+  border-radius: 22px;
+}
+
+.cta-banner h2 {
+  color: #fff1dc !important;
+}
+
+.cta-banner p {
+  color: #d2c2dc !important;
+}
+
+/* 12. CONTACT PAGE */
+
+.contact-info-card {
+  background:
+    radial-gradient(circle at top right,rgba(204,70,160,.3),transparent 45%),
+    linear-gradient(145deg,#29203f,#15152b) !important;
+
+  border: 1px solid rgba(204,70,160,.3);
+  box-shadow: 0 12px 35px rgba(0,0,0,.3);
+}
+
+.contact-info-card h3 {
+  color: #fff1dc !important;
+}
+
+.info-item i {
+  color: #ff885f;
+}
+
+.info-item h4 {
+  color: #c2b8d4;
+}
+
+.info-socials a {
+  color: #e8b7ff;
+}
+
+.contact-form-card {
+  background: #19182d !important;
+  border: 1px solid rgba(204,70,160,.3);
+  box-shadow: 0 12px 35px rgba(0,0,0,.3);
+}
+
+.form-group label {
+  color: #f1dff5;
+}
+
+input, select, textarea {
+  background: #111124 !important;
+  color: #fff1dc !important;
+  border: 1px solid #423153 !important;
+  border-radius: 10px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #91869f;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #cc46a0 !important;
+  box-shadow: 0 0 0 3px rgba(204,70,160,.15) !important;
+}
+
+/* Dropdown options */
+select option {
+  background: #19182d;
+  color: #fff1dc;
+}
+
+/* 13. ABOUT GRID */
+
+.about-grid {
+  color: #c2b8d4;
+}
+
+/* 14. FOOTER */
+
+footer {
+  background: linear-gradient(180deg,#141327,#090914) !important;
+  border-top: 1px solid rgba(204,70,160,.3);
+}
+
+.footer-links a {
+  color: #c2b8d4 !important;
+}
+
+.footer-links a:hover {
+  color: #ff91d5 !important;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(204,70,160,.2);
+  color: #958ba7;
+}
+
+/* 15. WHATSAPP BUTTON */
+
+.whatsapp-float {
+  background: #25d366 !important;
+  color: #fff !important;
+  box-shadow: 0 5px 25px rgba(37,211,102,.3);
+}
+
+/* 16. MOBILE RESPONSIVE */
+
+@media(max-width: 991px) {
+  .nav-links {
+    background: rgba(15,13,31,.98);
+    border-top-color: rgba(204,70,160,.25);
+  }
+
+  .nav-item i {
+    color: #e18be9 !important;
+  }
+}
+
+@media(max-width: 768px) {
+  .hero {
+    gap: 2rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem,9vw,3rem);
+  }
+
+  .stats-bar {
+    gap: 1.2rem;
+    padding: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .cta-banner {
+    padding: 2.5rem 1.2rem;
+  }
+
+  .cta-banner h2 {
+    font-size: 1.7rem;
+  }
+
+  .contact-form-card,
+  .contact-info-card {
+    padding: 1.5rem;
+  }
+}
+
+/* 17. ACCESSIBILITY */
+
+@media(prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
