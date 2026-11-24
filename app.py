@@ -8,6 +8,13 @@ from pymongo import MongoClient
 import certifi
 import requests
 
+# Safe requests import (पायथनच्या बिल्ट-इन लायब्ररीसह)
+try:
+    import requests
+except ImportError:
+    requests = None
+import urllib.request
+
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "default-fallback-secret-key-12345")
@@ -667,6 +674,9 @@ def user_submit_project():
 # ==========================================
 # AVISHKAR SOLUTIONS AI ASSISTANT (GEMINI AI)
 # ==========================================
+# ==========================================
+# AVISHKAR SOLUTIONS AI ASSISTANT (GEMINI AI)
+# ==========================================
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -675,7 +685,7 @@ def chat():
     data = request.get_json(silent=True) or {}
     messages = data.get("messages", [])
     
-    # जर थेट एकच मेसेज आला असेल
+    # थेट मेसेज आला असल्यास
     if not messages and data.get("message"):
         messages = [{"role": "user", "content": data.get("message")}]
         
@@ -686,7 +696,7 @@ def chat():
     if not latest_msg:
         return jsonify(reply="Please type a question."), 400
 
-    # जर API Key असेल, तर DeepMind Gemini कडून उत्तर मिळवा
+    # जर Gemini API Key असेल तर उत्तर मिळवा
     if GEMINI_API_KEY:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
@@ -723,13 +733,25 @@ def chat():
                 }
             }
             
-            res = requests.post(url, json=payload, timeout=15)
-            if res.status_code == 200:
-                res_data = res.json()
-                reply_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                return jsonify(reply=reply_text)
+            # --- येथे हा कोड लागतो (requests किंवा urllib द्वारे कॉल) ---
+            if requests is not None:
+                res = requests.post(url, json=payload, timeout=15)
+                if res.status_code == 200:
+                    res_data = res.json()
+                    reply_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    return jsonify(reply=reply_text)
             else:
-                app.logger.warning(f"AI API Status: {res.status_code}")
+                # Built-in Python fallback (कोणत्याही एक्स्ट्रा पॅकेजशिवाय चालणारा)
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"}
+                )
+                with urllib.request.urlopen(req, timeout=15) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    reply_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    return jsonify(reply=reply_text)
+
         except Exception as e:
             app.logger.warning(f"AI API Error: {e}")
 
@@ -737,6 +759,7 @@ def chat():
     return jsonify(
         reply="नमस्कार! मी Avishkar Solutions चा AI असिस्टंट आहे. फायनल इयर प्रोजेक्ट, विवा प्रश्न किंवा रेझ्युमेबद्दल विचारा, किंवा WhatsApp वर थेट संपर्क करा!"
     )
+ 
 
 
 if __name__ == "__main__":
