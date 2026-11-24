@@ -1,12 +1,46 @@
-<div id="chat" class="chat">
-  <section class="chat-panel" role="dialog" aria-label="Chat with the Avishkar Solutions assistant" hidden>
-    <header><strong>Ask Avishkar Solutions</strong><button type="button" class="chat-close" aria-label="Close chat">&times;</button></header>
-    <div class="chat-log" role="log" aria-live="polite"></div>
-    <form>
-      <input type="text" maxlength="500" placeholder="Type your question" aria-label="Your question" autocomplete="off">
-      <button class="btn small" type="submit">Send</button>
+<div id="chat" class="ai-chat-wrapper">
+  
+  <!-- AI CHAT PANEL -->
+  <section class="ai-chat-panel" role="dialog" aria-label="Avishkar AI Assistant" hidden>
+    <div class="ai-chat-header">
+      <div class="ai-brand">
+        <div class="ai-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <div class="ai-title">Avishkar AI Assistant</div>
+          <div class="ai-status"><span class="status-dot"></span> Online | Career & Project Mentor</div>
+        </div>
+      </div>
+      <button type="button" class="ai-close-btn" aria-label="Close Chat">&times;</button>
+    </div>
+
+    <!-- QUICK PROMPT CHIPS (१-क्लिक प्रश्न) -->
+    <div class="ai-chips">
+      <button type="button" class="ai-chip" data-chip="Suggest 3 final-year MCA project ideas with Python">💡 Project Ideas</button>
+      <button type="button" class="ai-chip" data-chip="How to make my resume ATS friendly?">📄 ATS Resume Tips</button>
+      <button type="button" class="ai-chip" data-chip="Viva preparation sathi tips dya">🎯 Viva Tips</button>
+    </div>
+
+    <!-- CHAT MESSAGES LOG -->
+    <div class="ai-chat-log" role="log"></div>
+
+    <!-- INPUT BOX -->
+    <form class="ai-chat-form">
+      <input type="text" maxlength="500" placeholder="Type your question here..." autocomplete="off">
+      <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
-    <p class="chat-note">AI assistant. Chats are saved to improve answers. For a personal reply use the <a href="{{ url_for('contact') }}">Contact page</a> or <a href="https://wa.me/{{ site.whatsapp }}">WhatsApp</a>.</p>
+
+    <!-- FOOTER / WHATSAPP HANDOFF -->
+    <div class="ai-chat-footer">
+      <span>Personal Mentoring हवी आहे?</span>
+      <a href="https://wa.me/{{ site.whatsapp }}?text=Hello%20Avishkar,%20I%20have%20an%20inquiry%20regarding%20projects" target="_blank" class="ai-wa-btn">
+        <i class="fa-brands fa-whatsapp"></i> WhatsApp Me
+      </a>
+    </div>
   </section>
-  <button type="button" class="chat-toggle btn" aria-expanded="false">Ask a question</button>
+
+  <!-- FLOATING BUTTON (तळाशी उजव्या बाजूला) -->
+  <button type="button" class="ai-floating-btn" aria-label="Ask AI Assistant">
+    <i class="fa-solid fa-robot"></i>
+    <span>Ask AI</span>
+  </button>
 </div>

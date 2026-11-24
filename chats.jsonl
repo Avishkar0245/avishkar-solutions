@@ -1,4 +1,92 @@
-{"time": "2026-11-12T15:39:48.156631", "question": "explain the grocerymart project feature and how to use language", "reply": "I help with final-year and MCA projects: choosing an idea, building it (Flask and web apps) and deploying it. Tell Avishkar your topic or tech stack on the Contact page and he will take it from there.", "source": "faq"}
-{"time": "2026-11-12T15:40:21.717156", "question": "how to download this project", "reply": "I help with final-year and MCA projects: choosing an idea, building it (Flask and web apps) and deploying it. Tell Avishkar your topic or tech stack on the Contact page and he will take it from there.", "source": "faq"}
-{"time": "2026-11-12T15:41:09.576504", "question": "what is avishkar solutions", "reply": "I am not sure about that one. Please use the Contact page or WhatsApp and Avishkar will answer personally.", "source": "faq"}
-{"time": "2026-11-12T15:49:49.805684", "question": "“can you help with my resume?”", "reply": "I build clean, ATS-friendly resumes and LinkedIn profiles for freshers. Send your details on the Contact page to get started.", "source": "faq"}
+(function () {
+  var root = document.getElementById("chat");
+  if (!root) return;
+
+  var panel = root.querySelector(".ai-chat-panel");
+  var log = root.querySelector(".ai-chat-log");
+  var form = root.querySelector(".ai-chat-form");
+  var input = form.querySelector("input");
+  var sendBtn = form.querySelector("button");
+  var toggleBtn = root.querySelector(".ai-floating-btn");
+  var closeBtn = root.querySelector(".ai-close-btn");
+  var chips = root.querySelectorAll(".ai-chip");
+  var history = [];
+
+  function addMsg(role, text) {
+    var d = document.createElement("div");
+    d.className = "ai-msg " + role;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+    return d;
+  }
+
+  function openChat() {
+    panel.hidden = false;
+    if (!log.children.length) {
+      addMsg("bot", "नमस्कार! 👋 मी Avishkar Solutions चा AI असिस्टंट आहे. फायनल इयर प्रोजेक्ट्स, कोडिंग, विवा किंवा रेझ्युमेबद्दल काहीही विचारा!");
+    }
+    input.focus();
+  }
+
+  function closeChat() {
+    panel.hidden = true;
+  }
+
+  toggleBtn.addEventListener("click", function () {
+    panel.hidden ? openChat() : closeChat();
+  });
+  closeBtn.addEventListener("click", closeChat);
+
+  // Navbar मधील "Ask AI" बटणावर क्लिक केल्यास चॅट उघडेल
+  document.querySelectorAll("[data-open-chat]").forEach(function (btn) {
+    btn.addEventListener("click", openChat);
+  });
+
+  // Quick Chips वर क्लिक केल्यास आपोआप प्रश्न विचारला जाईल
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      var question = chip.getAttribute("data-chip");
+      if (question) {
+        sendMessage(question);
+      }
+    });
+  });
+
+  async function sendMessage(text) {
+    if (!text) return;
+    input.value = "";
+    addMsg("user", text);
+    history.push({ role: "user", content: text });
+
+    var wait = addMsg("bot", "Thinking...");
+    wait.classList.add("wait");
+    sendBtn.disabled = true;
+
+    try {
+      var r = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: history })
+      });
+      var d = await r.json();
+      wait.textContent = d.reply || "Sorry, something went wrong.";
+      if (r.ok) {
+        history.push({ role: "assistant", content: d.reply });
+      }
+    } catch (err) {
+      wait.textContent = "Network error. Please try again or chat directly on WhatsApp.";
+    }
+    wait.classList.remove("wait");
+    sendBtn.disabled = false;
+    input.focus();
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (text) {
+      sendMessage(text);
+    }
+  });
+})();

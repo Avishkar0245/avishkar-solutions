@@ -1,13 +1,12 @@
-import os, json, datetime
+import os, json, datetime, urllib.parse, hmac
 from bson import ObjectId
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from functools import wraps
-import hmac
 from pymongo import MongoClient
 import certifi
-import urllib.parse
+import requests
 
 load_dotenv()
 app = Flask(__name__)
@@ -25,7 +24,7 @@ SITE = {
     "github": "https://github.com",
 }
 
-# Deafault services
+# Default services
 SERVICES = [
     {"title": "Project Mentoring",
      "text": "Final-year and MCA projects (Flask, web apps). Guidance from idea to coding to deployment.",
@@ -38,19 +37,19 @@ SERVICES = [
      "price": "Contact for price"},
 ]
 
-# Deafault services (backup)
+# Default projects (backup)
 PROJECTS = [
     {"title": "Medical Distribution Management System",
      "text": "A Complete Management System for Medical Distributors, Covering Inventory Management, Billing, Purchases, and Sales.",
      "tags": ["Flask", "Python", "MySQL"], "github": "#", "demo": "",
-      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80"},
+     "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80"},
     {"title": "GroceryMart",
      "text": "Full-stack grocery web app.",
      "tags": ["HTML", "CSS", "JavaScript", "Bootstrap", "Python", "MySQL"], "github": "#", "demo": "",
-            "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80"},
+     "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop&q=80"},
 ]
 
-# Deafault About information (backup)
+# Default About information (backup)
 DEFAULT_ABOUT = {
     "headline": "Hi, I'm Avishkar.",
     "intro": "MCA student, Full-Stack Developer, and Mentor helping freshers bridge the gap between college theory and industry-standard projects.",
@@ -59,7 +58,7 @@ DEFAULT_ABOUT = {
     "skills": "Python, Flask, MongoDB Atlas, MySQL, JavaScript, HTML5, CSS3, Git, REST APIs"
 }
 
-# deafualt Students Review (Backup)
+# Default Students Review (Backup)
 DEFAULT_REVIEWS = [
     {
         "name": "Harshad Patil",
@@ -95,7 +94,7 @@ def get_all_reviews():
     return DEFAULT_REVIEWS
 
 
-# WhatsApp number clean and URL AN code  Filtering
+# WhatsApp number clean and URL encode filters
 @app.template_filter('wa_phone')
 def wa_phone_filter(phone):
     if not phone:
@@ -138,7 +137,6 @@ except Exception as e:
 def get_all_projects():
     if _db is not None:
         try:
-            # only Approved And  Admin own takes project
             projs = list(_db.projects.find({
                 "$or": [
                     {"status": "Approved"},
@@ -274,8 +272,6 @@ def admin_dashboard():
                 "$or": [{"status": "New"}, {"status": {"$exists": False}}, {"status": ""}]
             })
             enquiries = list(_db.leads.find().sort("created_at", -1).limit(50))
-            
-            # Student Approval Wait for Pending project
             pending_projects = list(_db.projects.find({"status": "Pending"}).sort("_id", -1))
         except Exception as e:
             db_error = str(e)
@@ -363,6 +359,7 @@ def admin_add_project():
         "tags": tags,
         "github": github,
         "demo": demo,
+        "image": image,
         "created_at": datetime.datetime.utcnow()
     }
 
@@ -532,7 +529,7 @@ def user_login_required(f):
     return decorated_function
 
 
-# १. Student Register
+# 1. Student Register
 @app.route("/register", methods=["GET", "POST"])
 def user_register():
     if session.get("user_id"):
@@ -576,7 +573,7 @@ def user_register():
     return render_template("user_register.html")
 
 
-# २. Student Login
+# 2. Student Login
 @app.route("/login", methods=["GET", "POST"])
 def user_login():
     if session.get("user_id"):
@@ -600,7 +597,7 @@ def user_login():
     return render_template("user_login.html")
 
 
-# 3. student logout
+# 3. Student Logout
 @app.route("/logout")
 def user_logout():
     session.pop("user_id", None)
@@ -610,7 +607,7 @@ def user_logout():
     return redirect(url_for("home"))
 
 
-# 4. Student dashboard
+# 4. Student Dashboard
 @app.route("/user/dashboard")
 @user_login_required
 def user_dashboard():
@@ -624,7 +621,7 @@ def user_dashboard():
     return render_template("user_dashboard.html", user=user_info, projects=user_projects)
 
 
-# ५. student new project submited (Status: Pending)
+# 5. Student New Project Submit (Status: Pending)
 @app.route("/user/project/submit", methods=["POST"])
 @user_login_required
 def user_submit_project():
@@ -653,10 +650,11 @@ def user_submit_project():
         "tags": tags,
         "github": github,
         "demo": demo,
+        "image": image,
         "user_id": session["user_id"],
-        "user_name": user.get("name", "Student Developer"),
-        "user_college": user.get("college", "College Student"),
-        "user_github": user.get("github", github),
+        "user_name": user.get("name", "Student Developer") if user else "Student Developer",
+        "user_college": user.get("college", "College Student") if user else "College Student",
+        "user_github": user.get("github", github) if user else github,
         "status": "Pending",
         "created_at": datetime.datetime.utcnow()
     }
@@ -666,13 +664,80 @@ def user_submit_project():
     return redirect(url_for("user_dashboard"))
 
 
-# ---- CHATBOT BLUEPRINT ----
-try:
-    from chatbot import chat_bp
-    app.config["BOT_DATA"] = {"site": SITE, "services": SERVICES, "projects": PROJECTS}
-    app.register_blueprint(chat_bp)
-except Exception:
-    pass
+# ==========================================
+# AVISHKAR SOLUTIONS AI ASSISTANT (GEMINI AI)
+# ==========================================
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json(silent=True) or {}
+    messages = data.get("messages", [])
+    
+    # जर थेट एकच मेसेज आला असेल
+    if not messages and data.get("message"):
+        messages = [{"role": "user", "content": data.get("message")}]
+        
+    if not messages:
+        return jsonify(reply="Please type a message."), 400
+
+    latest_msg = messages[-1].get("content", "").strip() if isinstance(messages[-1], dict) else ""
+    if not latest_msg:
+        return jsonify(reply="Please type a question."), 400
+
+    # जर API Key असेल, तर DeepMind Gemini कडून उत्तर मिळवा
+    if GEMINI_API_KEY:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            
+            # मागील ५ संभाषणांचा संदर्भ (Context Memory)
+            contents = []
+            for m in messages[-6:]:
+                role = "user" if m.get("role") == "user" else "model"
+                text = m.get("content", "").strip()
+                if text:
+                    contents.append({"role": role, "parts": [{"text": text}]})
+            
+            payload = {
+                "system_instruction": {
+                    "parts": [{
+                        "text": (
+                            "You are the official AI Assistant for 'Avishkar Solutions', founded by Avishkar, an MCA student and full-stack developer (Python, Flask, JavaScript, MySQL, MongoDB). "
+                            "Avishkar Solutions specializes in:\n"
+                            "1) Final-Year & MCA Project Mentoring (Python, Flask, Web apps, Database systems, idea selection, live deployment, viva preparation).\n"
+                            "2) Harvard-style ATS Resume Building and LinkedIn optimization for freshers.\n"
+                            "3) IT and Banking/Finance Fresher Career Guidance.\n\n"
+                            "Strict Guidelines:\n"
+                            "- Never reveal the underlying AI model name (like Gemini, Google, OpenAI, Anthropic). Always introduce or act as 'Avishkar Solutions AI'.\n"
+                            "- Answer in the exact same language the user asks (fluent Marathi, English, or Hindi).\n"
+                            "- Keep answers friendly, crisp, and helpful (2 to 4 sentences). If a student asks for project ideas, suggest 2-3 trending, practical topics with tech stack.\n"
+                            "- If they ask about fees, paid mentoring, or customized projects, warmly invite them to message Avishkar on WhatsApp at +91-9373510245 or visit the Contact page."
+                        )
+                    }]
+                },
+                "contents": contents if contents else [{"role": "user", "parts": [{"text": latest_msg}]}],
+                "generationConfig": {
+                    "maxOutputTokens": 350,
+                    "temperature": 0.7
+                }
+            }
+            
+            res = requests.post(url, json=payload, timeout=15)
+            if res.status_code == 200:
+                res_data = res.json()
+                reply_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                return jsonify(reply=reply_text)
+            else:
+                app.logger.warning(f"AI API Status: {res.status_code}")
+        except Exception as e:
+            app.logger.warning(f"AI API Error: {e}")
+
+    # Fallback (बॅकअप उत्तर, जर API कधी व्यस्त असेल तर)
+    return jsonify(
+        reply="नमस्कार! मी Avishkar Solutions चा AI असिस्टंट आहे. फायनल इयर प्रोजेक्ट, विवा प्रश्न किंवा रेझ्युमेबद्दल विचारा, किंवा WhatsApp वर थेट संपर्क करा!"
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
