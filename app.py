@@ -755,7 +755,7 @@ def chat():
         except Exception as e:
             app.logger.warning(f"AI API Error: {e}")
 
-    # Fallback (बॅकअप उत्तर, जर API कधी व्यस्त असेल तर)
+    # Fallback (BAckup Ans,  API are a busy)
     return jsonify(
         reply="नमस्कार! मी Avishkar Solutions चा AI असिस्टंट आहे. फायनल इयर प्रोजेक्ट, विवा प्रश्न किंवा रेझ्युमेबद्दल विचारा, किंवा WhatsApp वर थेट संपर्क करा!"
     )
