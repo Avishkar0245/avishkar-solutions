@@ -1,7 +1,8 @@
+<!-- AVISHKAR AI CHAT WIDGET -->
 <div id="chat" class="ai-chat-wrapper">
-  
+
   <!-- AI CHAT PANEL -->
-  <section class="ai-chat-panel" role="dialog" aria-label="Avishkar AI Assistant" hidden>
+  <section class="ai-chat-panel" id="aiChatPanel" role="dialog" aria-label="Avishkar AI Assistant" style="display: none;">
     <div class="ai-chat-header">
       <div class="ai-brand">
         <div class="ai-avatar"><i class="fa-solid fa-robot"></i></div>
@@ -10,23 +11,27 @@
           <div class="ai-status"><span class="status-dot"></span> Online | Career & Project Mentor</div>
         </div>
       </div>
-      <button type="button" class="ai-close-btn" aria-label="Close Chat">&times;</button>
+      <button type="button" class="ai-close-btn" id="aiCloseBtn" aria-label="Close Chat">&times;</button>
     </div>
 
     <!-- QUICK PROMPT CHIPS (१-क्लिक प्रश्न) -->
     <div class="ai-chips">
       <button type="button" class="ai-chip" data-chip="Suggest 3 final-year MCA project ideas with Python">💡 Project Ideas</button>
-      <button type="button" class="ai-chip" data-chip="How to make my resume ATS friendly?">📄 ATS Resume Tips</button>
+      <button type="button" class="ai-chip" data-chip="How to make my resume ATS friendly for freshers?">📄 ATS Resume Tips</button>
       <button type="button" class="ai-chip" data-chip="Viva preparation sathi tips dya">🎯 Viva Tips</button>
     </div>
 
     <!-- CHAT MESSAGES LOG -->
-    <div class="ai-chat-log" role="log"></div>
+    <div class="ai-chat-log" id="aiChatLog" role="log">
+      <div class="ai-msg bot">
+        नमस्कार! 👋 मी <b>Avishkar Solutions AI Agent</b> आहे. फायनल इयर प्रोजेक्ट्स, कोडिंग, किंवा रेझ्युमेबद्दल काहीही विचारा!
+      </div>
+    </div>
 
     <!-- INPUT BOX -->
-    <form class="ai-chat-form">
-      <input type="text" maxlength="500" placeholder="Type your question here..." autocomplete="off">
-      <button type="submit" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
+    <form class="ai-chat-form" id="aiChatForm">
+      <input type="text" id="aiChatInput" maxlength="500" placeholder="Type your question here..." autocomplete="off" required>
+      <button type="submit" id="aiSendBtn" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 
     <!-- FOOTER / WHATSAPP HANDOFF -->
@@ -39,7 +44,7 @@
   </section>
 
   <!-- FLOATING BUTTON (तळाशी उजव्या बाजूला) -->
-  <button type="button" class="ai-floating-btn" aria-label="Ask AI Assistant">
+  <button type="button" class="ai-floating-btn" id="aiFloatingBtn" aria-label="Ask AI Assistant">
     <i class="fa-solid fa-robot"></i>
     <span>Ask AI</span>
   </button>

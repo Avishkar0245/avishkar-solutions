@@ -1,64 +1,112 @@
-(function () {
-  var root = document.getElementById("chat");
-  if (!root) return;
-  var panel = root.querySelector(".chat-panel");
-  var log = root.querySelector(".chat-log");
-  var form = root.querySelector("form");
-  var input = form.querySelector("input");
-  var send = form.querySelector("button");
-  var toggle = root.querySelector(".chat-toggle");
-  var history = [];
+document.addEventListener("DOMContentLoaded", function () {
+  const panel = document.getElementById("aiChatPanel");
+  const log = document.getElementById("aiChatLog");
+  const form = document.getElementById("aiChatForm");
+  const input = document.getElementById("aiChatInput");
+  const sendBtn = document.getElementById("aiSendBtn");
+  const floatBtn = document.getElementById("aiFloatingBtn");
+  const closeBtn = document.getElementById("aiCloseBtn");
+  const chips = document.querySelectorAll(".ai-chip");
+  const openButtons = document.querySelectorAll("[data-open-chat]");
 
-  function add(role, text) {
-    var d = document.createElement("div");
-    d.className = "msg " + role;
-    d.textContent = text;
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
-    return d;
-  }
+  let history = [];
+
   function openChat() {
-    panel.hidden = false;
-    toggle.setAttribute("aria-expanded", "true");
-    if (!log.children.length) {
-      add("bot", "Hi! I am the Avishkar Solutions assistant. Ask me about project guidance, resumes or career help.");
-    }
-    input.focus();
+    if (!panel) return;
+    panel.style.display = "flex";
+    if (input) input.focus();
   }
-  function closeChat() {
-    panel.hidden = true;
-    toggle.setAttribute("aria-expanded", "false");
-    toggle.focus();
-  }
-  toggle.addEventListener("click", function () { panel.hidden ? openChat() : closeChat(); });
-  root.querySelector(".chat-close").addEventListener("click", closeChat);
-  document.querySelectorAll("[data-open-chat]").forEach(function (b) { b.addEventListener("click", openChat); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !panel.hidden) closeChat(); });
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    var text = input.value.trim();
-    if (!text) return;
-    input.value = "";
-    add("user", text);
+  function closeChat() {
+    if (!panel) return;
+    panel.style.display = "none";
+  }
+
+  // फ्लोटिंग बटण क्लिक
+  if (floatBtn) {
+    floatBtn.addEventListener("click", function () {
+      if (panel.style.display === "none" || !panel.style.display) {
+        openChat();
+      } else {
+        closeChat();
+      }
+    });
+  }
+
+  // क्लोज बटण क्लिक
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeChat);
+  }
+
+  // हेडर किंवा इतर ठिकाणच्या "Ask AI" बटन्ससाठी
+  openButtons.forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      openChat();
+    });
+  });
+
+  // Quick Chips क्लिक
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      const question = chip.getAttribute("data-chip");
+      if (question) {
+        sendMessage(question);
+      }
+    });
+  });
+
+  // मेसेज पाठवणे
+  async function sendMessage(text) {
+    if (!text || !log) return;
+    if (input) input.value = "";
+
+    // युझरचा मेसेज दाखवा
+    const userMsg = document.createElement("div");
+    userMsg.className = "ai-msg user";
+    userMsg.textContent = text;
+    log.appendChild(userMsg);
+
     history.push({ role: "user", content: text });
-    var wait = add("bot", "Typing...");
-    wait.classList.add("wait");
-    send.disabled = true;
+
+    // AI टाईपिंग स्टेटस दाखवा
+    const botMsg = document.createElement("div");
+    botMsg.className = "ai-msg bot wait";
+    botMsg.textContent = "Thinking...";
+    log.appendChild(botMsg);
+    log.scrollTop = log.scrollHeight;
+
+    if (sendBtn) sendBtn.disabled = true;
+
     try {
-      var r = await fetch("/chat", {
+      const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history })
       });
-      var d = await r.json();
-      wait.textContent = d.reply || "Sorry, something went wrong.";
-      if (r.ok) history.push({ role: "assistant", content: d.reply });
+      const data = await res.json();
+      botMsg.classList.remove("wait");
+      botMsg.textContent = data.reply || "Sorry, something went wrong.";
+      if (res.ok) {
+        history.push({ role: "assistant", content: data.reply });
+      }
     } catch (err) {
-      wait.textContent = "Network problem. Please try again or use the Contact page.";
+      botMsg.classList.remove("wait");
+      botMsg.textContent = "Network error. Please try again or WhatsApp Avishkar directly.";
     }
-    wait.classList.remove("wait");
-    send.disabled = false;
-    input.focus();
-  });
-})();
+
+    if (sendBtn) sendBtn.disabled = false;
+    if (input) input.focus();
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // फॉर्म सबमिट
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (input && input.value.trim()) {
+        sendMessage(input.value.trim());
+      }
+    });
+  }
+});
